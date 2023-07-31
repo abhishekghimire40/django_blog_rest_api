@@ -22,10 +22,25 @@ def blog_list(request):
 
 
 # returns detail of a blog
-@api_view(["GET"])
+@api_view(["GET", "PUT", "DELETE"])
 def blog_detail(request, pk):
     try:
         blog = Blog.objects.get(is_public=True, id=pk)
+
+        # for put requests
+        if request.method == "PUT":
+            serialized_blog = BlogSerializer(blog, data=request.data)
+            if serialized_blog.is_valid():
+                serialized_blog.save()
+                return Response(serialized_blog.data)
+            else:
+                return Response(serialized_blog.errors, status=400)
+
+        # for delete requests
+        if request.method == "DELETE":
+            blog.delete()
+            return Response(status=204)
+
         serialized_blog = BlogSerializer(blog)
         return Response(serialized_blog.data)
     except ObjectDoesNotExist:
