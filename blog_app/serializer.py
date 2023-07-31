@@ -1,17 +1,30 @@
 from rest_framework import serializers
-from blog_app.models import Blog
+from blog_app.models import Blog, Category
 
 
 # ----------------Model serializer----------------
 class BlogSerializer(serializers.ModelSerializer):
+    category = serializers.SerializerMethodField()
+
     class Meta:
         model = Blog
         # Get only specific fields in response:
-        fields = ["id", "blog_title", "author", "blog_description", "is_public"]
+        fields = [
+            "id",
+            "blog_title",
+            "author",
+            "blog_description",
+            "is_public",
+            "category",
+        ]
         # Get all fields in response:
         # fields = "__all__"
         # Exclude certain fields:
         # exclude = ["slug"]
+
+    # overriding category field with the name of category instead of id using serializer method fields
+    def get_category(self, object):
+        return object.category.category_name if object.category else None
 
     # field-level validation
     def validate_blog_title(self, value):
@@ -30,6 +43,25 @@ class BlogSerializer(serializers.ModelSerializer):
             )
         else:
             return data
+
+    """
+    # Get Custom method fields in serializers in responses
+    # New key value  in our response i.e. len of blog's title
+    # you also have to set the fields name in fields above in class Meta if not used fields as __all__
+    len_blog_title = serializers.SerializerMethodField()
+
+    def get_len_blog_title(self, object):
+        return len(object.blog_title)
+    """
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField()
+    category = BlogSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Category
+        exclude = ["id"]
 
 
 """
