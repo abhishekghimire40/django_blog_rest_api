@@ -2,7 +2,8 @@ from rest_framework import serializers
 from blog_app.models import Blog
 
 
-# serializer for  blog model
+"""
+# --------normal serializer for  blog model ;manual-----------------
 class BlogSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField()
@@ -24,3 +25,16 @@ class BlogSerializer(serializers.Serializer):
         instance.slug = validated_data.get("slug", instance.slug)
         instance.save()
         return instance
+"""
+
+
+# ----------------Model serializer----------------
+class BlogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Blog
+        # Get all fields in response:
+        # fields = "__all__"
+        # Get only specific fields in response:
+        fields = ["id", "name", "author", "description", "is_public"]
+        # Exclude certain fields:
+        # exclude = ["slug"]
