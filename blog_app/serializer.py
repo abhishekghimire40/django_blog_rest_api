@@ -7,26 +7,26 @@ class BlogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Blog
         # Get only specific fields in response:
-        fields = ["id", "name", "author", "description", "is_public"]
+        fields = ["id", "blog_title", "author", "blog_description", "is_public"]
         # Get all fields in response:
         # fields = "__all__"
         # Exclude certain fields:
         # exclude = ["slug"]
 
     # field-level validation
-    def validate_name(self, value):
+    def validate_blog_title(self, value):
         if len(value) < 4:
-            raise serializers.ValidationError("Blog name is too short!")
+            raise serializers.ValidationError("Blog title is too short!")
         else:
             return value
 
     # Object-level validation
     def validate(self, data):
-        if len(data["description"]) < 4:
+        if len(data["blog_description"]) < 4:
             raise serializers.ValidationError("Description is too short!")
-        elif data["name"] == data["description"]:
+        elif data["blog_title"] == data["blog_description"]:
             raise serializers.ValidationError(
-                "name and description of blog cannot be same"
+                "title and description of blog cannot be same"
             )
         else:
             return data
