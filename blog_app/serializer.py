@@ -13,6 +13,24 @@ class BlogSerializer(serializers.ModelSerializer):
         # Exclude certain fields:
         # exclude = ["slug"]
 
+    # field-level validation
+    def validate_name(self, value):
+        if len(value) < 4:
+            raise serializers.ValidationError("Blog name is too short!")
+        else:
+            return value
+
+    # Object-level validation
+    def validate(self, data):
+        if len(data["description"]) < 4:
+            raise serializers.ValidationError("Description is too short!")
+        elif data["name"] == data["description"]:
+            raise serializers.ValidationError(
+                "name and description of blog cannot be same"
+            )
+        else:
+            return data
+
 
 """
 # --------normal serializer for  blog model ;manual-----------------

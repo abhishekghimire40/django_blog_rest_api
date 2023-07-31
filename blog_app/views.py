@@ -17,7 +17,7 @@ class BlogListView(APIView):
         if serialized_data.is_valid():
             serialized_data.save()
             return Response(serialized_data.data, status=201)
-        return Response(serialized_data.errors)
+        return Response(serialized_data.errors, status=400)
 
 
 class BlogDetailView(APIView):
@@ -35,8 +35,8 @@ class BlogDetailView(APIView):
             serialized_data = BlogSerializer(blog, data=request.data)
             if serialized_data.is_valid():
                 serialized_data.save()
-                return Response(serialized_data.data, 201)
-            return Response(serialized_data.errors, status=404)
+                return Response(serialized_data.data, status=201)
+            return Response(serialized_data.errors, status=400)
         except ObjectDoesNotExist:
             return self.errorResponse()
 
