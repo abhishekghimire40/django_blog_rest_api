@@ -57,11 +57,46 @@ class BlogSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     category_name = serializers.CharField()
+    # Display  all blogs and its detials related to a category
     category = BlogSerializer(many=True, read_only=True)
+    '''
+    RELATED FIELDS:
+    # ?1.StringRelatedField: Display only blog title related to the category
+    category = serializers.StringRelatedField(many=True)
+    # ?2. PrimaryKeyRelatedField: Display only primarykey field of related bolgs
+    category = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    """ 3. HyperLinkRelatedField: Display hyperLinked related field which directly provides link
+        to the related blog We have to pass view_name i.e.name given in urls.py, to its option
+        and also pass context={'request':request} to our category serializers options in view
+    """
+    category = serializers.HyperlinkedRelatedField(
+    #     many=True, read_only=True, view_name="blog_detail"
+    # )
+    # ?4. SlugRelatedField: Display slug field of related blogs in response api
+    category = serializers.SlugRelatedField(
+        many=True, read_only=True, slug_field="slug"
+    )
+    '''
 
     class Meta:
         model = Category
         exclude = ["id"]
+
+
+"""
+HYPERLINKED MODEL SERIALIZER:
+It serialized model and returns the link/url inplace of id or primarly key in its reponse which
+links to that category or models response detail. You also have to make your url name if like 
+category_detail to category-detail
+
+class CategorySerializer(serializers.HyperlinkedModelSerializer):
+    category_name = serializers.CharField()
+    category = BlogSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Category
+        fields = "__all__"
+"""
 
 
 """

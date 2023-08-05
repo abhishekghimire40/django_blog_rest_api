@@ -9,7 +9,9 @@ from .serializer import BlogSerializer, CategorySerializer
 class CategoryListView(APIView):
     def get(self, request):
         categories = Category.objects.all()
-        serialized_data = CategorySerializer(categories, many=True)
+        serialized_data = CategorySerializer(
+            categories, many=True, context={"request": request}
+        )
         return Response(serialized_data.data, 200)
 
 
@@ -17,7 +19,9 @@ class CategoryDetailView(APIView):
     def get(self, request, pk):
         try:
             single_category = Category.objects.get(id=pk)
-            serialized_category = CategorySerializer(single_category)
+            serialized_category = CategorySerializer(
+                single_category, context={"request": request}
+            )
             return Response(serialized_category.data, 200)
         except:
             return self.errorResponse()

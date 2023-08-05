@@ -11,7 +11,7 @@ urlpatterns = [
     path(
         "category_detail/<int:pk>/",
         views.CategoryDetailView.as_view(),
-        name="category_detail",
+        name="category-detail",
     ),
 ]
 
